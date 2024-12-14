@@ -1,0 +1,41 @@
+{% extends "home.html" %} {% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <form class="mt-5 p-4 border rounded bg-white shadow-sm" method="POST" action="/login">
+            <h2 class="text-center mb-4">Login</h2>
+            {{ form.hidden_tag() }} {{ form.csrf_token }}
+
+            <div class="form-group mb-3">
+                <label for="username" class="form-label">{{ form.username.label.text }}</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                    {{ form.username(class_="form-control", placeholder="Enter your username or email") }}
+                </div>
+                {% for error in form.username.errors %}
+                <small class="text-danger">{{ error }}</small>
+                {% endfor %}
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="password" class="form-label">{{ form.password.label.text }}</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                    {{ form.password(class_="form-control", placeholder="Enter your password") }}
+                </div>
+                {% for error in form.password.errors %}
+                <small class="text-danger">{{ error }}< /small>
+                        {% endfor %}
+            </div>
+
+            <div class="text-center">
+                {{ form.submit(class_="btn btn-primary w-100") }}
+            </div>
+
+            <p class="text-center mt-3">
+                Don't have an account? <a href="{{url_for('main.signup')}}">Sign up here</a>
+            </p>
+        </form>
+    </div>
+</div>
+{% endblock %}
