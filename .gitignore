@@ -1,0 +1,5 @@
+venv/
+*.db
+.prettierrc
+__pycache__/
+.DS_Store
