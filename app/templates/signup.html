@@ -7,7 +7,18 @@
         <form class="mt-5 p-4 border rounded bg-white shadow-sm" method="post">
             <h2 class="text-center mb-4">Sign Up</h2>
             {{ form.hidden_tag() }} {{ form.csrf_token }}
-
+            {%with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="alert alert-danger">
+                <strong>Failed to sign up</strong>
+                <ul class="mb-0">
+                    {% for message in messages %}
+                    <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            {% endwith %}
             <div class="form-group mb-3">
                 <label for="username" class="form-label">{{ form.username.label.text }}</label>
                 <div class="input-group">

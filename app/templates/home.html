@@ -36,26 +36,34 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">About</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/login">login</a>
-                    </li>
-                    {% if current_user.is_authenticated %}
+                </ul>
+                {% if current_user.is_authenticated %}
+                <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link">Logged in as: {{ current_user.username }}</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
+                            aria-expanded="false"><img
+                                src="{{ url_for('static', filename='profile_pics/' + current_user.image_file) }}"
+                                class="rounded-circle border border-3 border-light" alt="Profile Picture" width="30"
+                                height="30">
                             {{ current_user.username }}
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
+                            <li><a class="dropdown-item" href="{{url_for('main.profile')}}">Profile</a></li>
                             <li><a class="dropdown-item" href="#">Another action</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
                             <li><a class="dropdown-item" href="{{url_for('main.logout')}}">Log out</a></li>
                         </ul>
+                    </li>
+                </ul>
+                {% else %}
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/signup">Sign up</a>
                     </li>
                     {% endif %}
                 </ul>
@@ -71,15 +79,19 @@
     {% endif %}
     {% endwith %}
     <!-- Main Content -->
-    <div class=" d-flex flex-column min-vh-100">
+    <div class="content d-flex flex-column min-vh-100 mt-auto" style="margin-left: auto; margin-right: auto;">
         {% block content %}
-        <p>Welcome to my Flask app!</p>
+        {% if current_user.is_authenticated %}
+        <h1>Welcome, {{ current_user.display_name }}!</h1>
+        {% else %}
+        <h1>Welcome to my Flask app!</h1>
+        {% endif %}
         {% endblock %}
-        <!-- Footer -->
-        <footer class="bg-dark text-white text-center py-3 mt-auto">
-            <p class="mb-0">&copy; 2024 My Flask App. All Rights Reserved.</p>
-            <p><i class="bi bi-github"></i> <a href="#" class="text-white text-decoration-none">GitHub</a></p>
-        </footer>
+    </div>
+    <!-- Footer -->
+    <div class="footer bg-dark text-white text-center py-3 mt-auto">
+        <p class="mb-0">&copy; 2024 My Flask App. All Rights Reserved.</p>
+        <p><i class="bi bi-github"></i> <a href="#" class="text-white text-decoration-none">GitHub</a></p>
 
     </div>
 

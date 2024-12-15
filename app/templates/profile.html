@@ -1,0 +1,76 @@
+{% extends "home.html" %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <!-- Profile Card -->
+            <div class="card shadow-sm">
+                <!-- Avatar View -->
+                <div class="card-header bg-primary text-white text-center">
+                    <div class="d-flex justify-content-center">
+                        {% if user.image_file != 'default.jpg' %}
+                        <img src="{{ url_for('static', filename='profile_pics/' + user.image_file) }}"
+                            class="rounded-circle border border-3 border-light" alt="Profile Picture" width="120"
+                            height="120">
+                        {% else %}
+                        <img src="{{ url_for('static', filename='profile_pics/default.png') }}"
+                            class="rounded-circle border border-3 border-light" alt="Default Avatar" width="120"
+                            height="120">
+                        {% endif %}
+                    </div>
+                    <h4 class="mt-3 mb-0">{{ user.display_name or 'Your Name' }}</h4>
+                    <p class="text-light small">{{ user.email or 'your-email@example.com' }}</p>
+                </div>
+
+                <!-- Profile Form -->
+                <div class="card-body p-4">
+                    <form method="POST" action="/profile" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+
+                        <!-- Username -->
+                        <div class="mb-3">
+                            {{ form.username.label(class_="form-label fw-bold") }}
+                            {{ form.username(class_="form-control", placeholder="Enter your username") }}
+                        </div>
+
+                        <!-- Display Name -->
+                        <div class="mb-3">
+                            {{ form.display_name.label(class_="form-label fw-bold") }}
+                            {{ form.display_name(class_="form-control", placeholder="Enter your display name") }}
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            {{ form.email.label(class_="form-label fw-bold") }}
+                            {{ form.email(class_="form-control", placeholder="Enter your email address") }}
+                        </div>
+
+                        <!-- Bio -->
+                        <div class="mb-3">
+                            {{ form.bio.label(class_="form-label fw-bold") }}
+                            {{ form.bio(class_="form-control", rows=4, placeholder="Write something about yourself...")
+                            }}
+                        </div>
+
+                        <!-- Avatar Upload -->
+                        <div class="mb-3">
+                            {{ form.avatar.label(class_="form-label fw-bold") }}
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    {{ form.avatar(class_="form-control form-control-sm", accept=".jpg, .jpeg, .png") }}
+                                </div>
+                            </div>
+                            <small class="text-muted">Upload a .jpg or .png image (max size: 2MB)</small>
+                        </div>
+
+                        <!-- Save Button -->
+                        <div class="d-grid">
+                            {{ form.submit(class_="btn btn-primary btn-lg") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

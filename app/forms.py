@@ -2,9 +2,10 @@ import re
 
 from flask import flash
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileAllowed, FileField
 from wtforms import (EmailField, PasswordField, SearchField, StringField,
                      SubmitField)
-from wtforms.validators import DataRequired, Email, Length
+from wtforms.validators import DataRequired, Email, EqualTo, Length
 
 
 class LoginForm(FlaskForm):
@@ -21,32 +22,55 @@ class SignUpForm(FlaskForm):
         min=3, max=20)])
 
     email = EmailField('Email', validators=[DataRequired()])
+
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField(
-        'Confirm Password', validators=[DataRequired()])
+        'Confirm Password', validators=[DataRequired(), EqualTo('password', message='Passwords must match')])
+
     submit = SubmitField('Sign Up')
 
+    def validate_password(self, field):
+        """
+        Validates the password against custom requirements:
+        - Minimum 8 characters
+        - At least one uppercase letter
+        - At least one lowercase letter
+        - At least one number
+        - At least one special character
+        """
+        password = field.data
 
-def validate_password(password):
-    """
-    Validates the password against custom requirements:
-    - Minimum 8 characters
-    - At least one uppercase letter
-    - At least one lowercase letter
-    - At least one number
-    - At least one special character
-    """
-    if len(password) < 8:
-        flash("Password must be at least 8 characters long.", category='danger')
-    if not re.search(r'[A-Z]', password):
-        flash("Password must contain at least one uppercase letter.",
-              category='danger')
-    if not re.search(r'[a-z]', password):
-        flash("Password must contain at least one lowercase letter.",
-              category='danger')
-    if not re.search(r'[0-9]', password):
-        flash("Password must contain at least one number.", category='danger')
-    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
-        flash("Password must contain at least one special character.",
-              category='danger')
-    return None
+        # Password length check
+        if len(password) < 8:
+            flash("Password must be at least 8 characters long.", category='danger')
+
+        # Uppercase letter check
+        if not re.search(r'[A-Z]', password):
+            flash("Password must contain at least one uppercase letter.",
+                  category='danger')
+
+        # Lowercase letter check
+        if not re.search(r'[a-z]', password):
+            flash("Password must contain at least one lowercase letter.",
+                  category='danger')
+
+        # Number check
+        if not re.search(r'[0-9]', password):
+            flash("Password must contain at least one number.", category='danger')
+
+        # Special character check
+        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+            flash("Password must contain at least one special character.",
+                  category='danger')
+
+        return True
+
+
+class ProfileForm(FlaskForm):
+    username = StringField('Username', validators=[Length(max=20)])
+    display_name = StringField('Display Name', validators=[Length(max=20)])
+    email = EmailField('Email', validators=[Email(), Length(max=50)])
+    bio = StringField('Bio', validators=[Length(max=50)])
+    avatar = FileField('Avatar', validators=[
+                       FileAllowed(['jpg', 'jpeg', 'png'])])
+    submit = SubmitField('Save')
