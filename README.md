@@ -22,7 +22,7 @@ The Flask Starter App is a versatile foundation for building a wide range of web
 
 ### 1. Clone the Repository
 ```bash
-git clone <repository-url>
+git clone https://github.com/DevMohammad-SA/FlaskStarterApp
 cd flask-starter-app
 ```
 
@@ -34,10 +34,7 @@ source venv/bin/activate # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 3. Configure the Application
-- Rename the `.env.example` file to `.env` and update the environment variables (e.g., `SECRET_KEY`, `DATABASE_URL`).
-
-### 4. Initialize the Database
+### 3. Initialize the Database
 Run the following commands to set up the database:
 ```bash
 flask db init
@@ -45,7 +42,7 @@ flask db migrate -m "Initial migration."
 flask db upgrade
 ```
 
-### 5. Run the Application
+### 4. Run the Application
 Start the Flask development server:
 ```bash
 flask run
