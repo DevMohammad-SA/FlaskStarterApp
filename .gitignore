@@ -3,3 +3,7 @@ venv/
 .prettierrc
 __pycache__/
 .DS_Store
+*.png
+*.jpg
+*.jpeg
+!default.png
