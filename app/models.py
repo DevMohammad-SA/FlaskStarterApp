@@ -9,6 +9,7 @@ class users(db.Model, UserMixin):
     username = db.Column(db.String(20), unique=True, nullable=False,)
     display_name = db.Column(db.String(20), unique=True, nullable=False,)
     email = db.Column(db.String(120), unique=True, nullable=False,)
+    role = db.Column(db.String(20), nullable=False, default='user')
     image_file = db.Column(db.String(120), nullable=False,
                            default='default.png')
     password = db.Column(db.String(60), nullable=False)

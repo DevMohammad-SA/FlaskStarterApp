@@ -7,7 +7,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 
 from . import db, login_manager
-from .forms import LoginForm, ProfileForm, SignUpForm
+from .forms import (ChangePasswordForm, ChangeRoleForm, LoginForm, ProfileForm,
+                    SearchForm, SignUpForm)
 from .models import users
 
 main = Blueprint('main', __name__)
@@ -133,3 +134,76 @@ def profile():
     form.email.data = user.email
     form.bio.data = user.bio
     return render_template('profile.html', form=form, user=user)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return users.query.get(int(user_id))
+
+
+@main.route('/admin_dashboard', methods=['GET', 'POST'])
+@login_required
+def admin_dashboard():
+    users_db = users.query.all()
+    password_form = ChangePasswordForm()
+    role_form = ChangeRoleForm()
+    search_form = SearchForm()
+    results = None
+    if search_form.validate_on_submit():
+        search_query = search_form.query.data  # Get the search input
+        # Query the database to find matching users
+        results = users.query.filter(
+            users.username.like(f'%{search_query}%')).all()
+        # Redirect or render the template with results
+        return render_template('search_results.html', results=results, users=users_db, form=search_form, passwordForm=password_form, roleForm=role_form)
+    return render_template('admin_dashboard.html', users_db=users_db, passwordForm=password_form, roleForm=role_form, searchForm=search_form, results=results)
+
+
+@ main.route('/change_password/<int:id>', methods=['POST'])
+@login_required
+def change_password(id):
+    print(f"Change password route invoked for user {id}")
+    user = users.query.get_or_404(id)
+    print(f"User: {user}")
+    form = ChangePasswordForm(request.form)  # Bind request data
+    if request.form.get('new_password'):
+        print("Form validated")
+        if form.new_password.data != form.confirm_password.data:
+            print("New passwords do not match")
+            flash('New passwords do not match.', category='danger')
+        else:
+            print("Updating password")
+            user.password = generate_password_hash(
+                form.new_password.data, method='scrypt', salt_length=8)
+            db.session.commit()
+            flash(f'{user.display_name} Password changed successfully!',
+                  category='success')
+            return redirect(url_for('main.admin_dashboard'))
+    return render_template('admin_dashboard.html', passwordForm=form, user=user)
+
+
+@main.route('/change_role/<int:id>', methods=['POST'])
+@login_required
+def change_role(id):
+    print(f"Change role route invoked for user {id}")
+    user = users.query.get_or_404(id)
+    print(f"User: {user}")
+    form = ChangeRoleForm(request.form)
+    if request.form.get('new_role'):
+        print("Form validated")
+        user.role = form.new_role.data
+        db.session.commit()
+        flash(f'{user.display_name} Role changed successfully!',
+              category='success')
+        return redirect(url_for('main.admin_dashboard'))
+    return render_template('admin_dashboard.html', roleForm=form, user=user)
+
+
+@main.route('/delete_user/<int:id>', methods=['POST', 'GET'])
+@login_required
+def delete_user(id):
+    user = users.query.get_or_404(id)
+    db.session.delete(user)
+    db.session.commit()
+    flash(f'{user.display_name} deleted successfully!', category='success')
+    return redirect(url_for('main.admin_dashboard'))
