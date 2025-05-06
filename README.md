@@ -1,5 +1,5 @@
 # Flask Starter App
-
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ## Overview
 
 The Flask Starter App is a versatile foundation for building a wide range of web applications, such as blogs, social media platforms, forums, or custom projects. It is designed with scalability and flexibility in mind, providing essential features to streamline development and accelerate deployment.
